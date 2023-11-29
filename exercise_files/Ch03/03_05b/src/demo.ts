@@ -1,12 +1,3 @@
-let x: Record<string, string | number | boolean | Function> = { name: "Ryan" }
-x.number = 5;
-// x.lodger = {} - not in record of acceptable values for string property
-
-// let x = { name: "Wruce Bayne" };
-// x.id = 1234;                 Opts out of typescript type checking though...
-
-
-
 ////////////////////
 
 type ContactStatus = "active" | "inactive" | "new";
@@ -22,6 +13,7 @@ interface Contact {
     name: string;
     status: ContactStatus;
     address: Address;
+    email: string;
 }
 
 interface Query {
@@ -29,7 +21,29 @@ interface Query {
     matches(val): boolean;
 }
 
-function searchContacts(contacts: Contact[], query: Record<keyof Contact, Query>) {
+// Below allows any partial properties of a record with key of contact and a query, but omits address and status
+// type ContactQuery =
+//     Omit<
+//         Partial<
+//             Record<
+//                 keyof Contact, Query
+//             >
+//         >,
+//         "address" | "status"   // ommit address property from valid contactquery type
+//     >
+
+// Below means Pick only from id and name as valid query no matter what gets added, ie email above
+// type ContactQuery =
+//     Partial<
+//         Pick<
+//             Record<keyof Contact, Query>,
+//             "id" | "name"
+//         >
+//     >
+
+// type RequiredContactQuery = Required<ContactQuery>;
+
+function searchContacts(contacts: Contact[], query: ContactQuery) {
     return contacts.filter(contact => {
         for (const property of Object.keys(contact) as (keyof Contact)[]) {
             // get the query object for this property
