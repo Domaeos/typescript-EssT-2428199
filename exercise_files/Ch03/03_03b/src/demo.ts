@@ -16,7 +16,7 @@ interface Contact {
     status?: ContactStatus;
 }
 
-function toContact(nameOrContact) {
+function toContact(nameOrContact: string | Contact): Contact {
     if (typeof nameOrContact === "object") {
         return {
             id: nameOrContact.id,
@@ -32,3 +32,11 @@ function toContact(nameOrContact) {
         }
     }
 }
+
+const myType = { min: 100, max: 400 }
+
+function save(source: typeof myType): void {
+    console.log("Type of min max props")
+}
+// save("hi") - error
+save({ min: 2, max: 10 }); // Matches the props so this is fine - probably better to create type alias or interface for this

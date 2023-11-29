@@ -14,15 +14,15 @@ interface Contact {
 }
 
 interface ContactEvent {
-    contactId: number;
+    contactId: Contact["id"]; // still a number but links to ID of a contact now
 }
 
-interface ContactDeletedEvent extends ContactEvent { 
+interface ContactDeletedEvent extends ContactEvent {
 }
 
-interface ContactStatusChangedEvent extends ContactEvent { 
-    oldStatus: ContactStatus;
-    newStatus: ContactStatus;
+interface ContactStatusChangedEvent extends ContactEvent {
+    oldStatus: Contact["status"];
+    newStatus: Contact["status"];
 }
 
 interface ContactEvents {
@@ -34,3 +34,11 @@ interface ContactEvents {
 function getValue<T, U extends keyof T>(source: T, propertyName: U) {
     return source[propertyName];
 }
+
+function handleEvent<T extends keyof ContactEvents>(eventName: T, handler: (evt: ContactEvents[T]) => void) {
+    if (eventName === "statusChanged") {
+        handler({ contactId: 2, oldStatus: "active", newStatus: "inactive"})
+    }
+}
+
+handleEvent("statusChanged", evt => evt)
